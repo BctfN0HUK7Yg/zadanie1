@@ -1,7 +1,7 @@
 use std::thread;
 use std::time::Duration;
 
-const TRASHHOLD:usize=4;
+const TRASHHOLD:usize=5;
 
 
 fn f<T,R>(_t:&T)->R 
@@ -23,7 +23,7 @@ fn split_work<T,R> (work:&Vec<T>) -> Vec<R>
         
         ranges_of_work.push((i,i+size_of_work));
     }
-    let num_of_threasds=work.len()/TRASHHOLD+1;
+    let num_of_threasds=if work.len() % TRASHHOLD>0 {work.len() / TRASHHOLD +1} else {work.len() / TRASHHOLD};
 
         crossbeam::scope(|s|{
             let mut handles=Vec::new();
@@ -77,10 +77,10 @@ mod tests {
         assert_eq!(res, rigth_res);
     }
     #[test]
-    fn input_17_f64_output_i32() {
-        let input=vec![1.0;30];
+    fn input_32_f64_output_i32() {
+        let input=vec![1.0;32];
         let res=crate::split_work::<_,i32>(&input);
-        let rigth_res=vec![0;30];
+        let rigth_res=vec![0;32];
         assert_eq!(res, rigth_res);
     }
     #[test]
